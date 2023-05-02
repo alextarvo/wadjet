@@ -1,0 +1,65 @@
+//
+// Configuration for the Wadjet image capturing pipeline
+// To compile: protoc ./camera_config.proto --python_out=.
+//
+
+syntax = "proto2";
+
+package wadjet;
+
+	message Resolution {
+		optional int32 x = 1;
+		optional int32 y = 2;
+	}
+
+	message Point {
+		optional int32 x = 1;
+		optional int32 y = 2;
+	}
+	
+	message Region4 {
+		optional Point lower_left = 1;
+		optional Point upper_left = 2;
+		optional Point lower_right = 3;
+		optional Point upper_right = 4;
+	}
+	
+message CameraConfig {
+	// Type of the camera. Either generic USB (debug) or Intel RealSense
+	enum CameraType {
+		USB = 0;
+		INTEL_REALSENSE = 1;
+	}
+	
+	// Camera configuration
+	//
+	
+	// Camera type: USB or RealSense
+	optional CameraType camera_type = 1;
+	// Camera source ID. Used with USB cameras. Default camera has source ID 0.
+	optional int32 camera_source = 2;
+	// Resolution to be set with the camera. If setting resolution is unsuccessful, the pipeline would fail.
+	optional Resolution original_resolution = 3;
+	// The FPS to set at camera. If setting FPS is unsuccessful, the pipeline would fail.
+	optional int32 fps = 4;
+	// Exposure to set with the camera.
+	optional float exposure = 5;
+}
+
+message PreprocessConfig {
+	// Region on the image that corresponds to a pool table.
+	// The pipeline will employ projective transform to translate region on the original image
+	// into the new image. 
+	optional Region4 source_region = 10;
+	
+	// The translated resolution of the table region, as will be passed to the neural net
+	optional Resolution translate_resolution = 11;
+	
+	// True enables the translation.
+	optional bool do_translation = 12;
+}
+
+message PipelineConfig {
+	optional CameraConfig camera_config = 1;
+	optional PreprocessConfig preprocess_config = 2;
+}

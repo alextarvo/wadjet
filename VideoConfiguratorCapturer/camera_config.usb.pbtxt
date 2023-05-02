@@ -1,0 +1,35 @@
+{
+  "cameraConfig": {
+    "cameraType": "USB",
+    "originalResolution": {
+      "x": 1280,
+      "y": 720
+    },
+    "fps": 10
+  },
+  "preprocessConfig": {
+    "sourceRegion": {
+      "lowerLeft": {
+        "x": 413,
+        "y": 456
+      },
+      "upperLeft": {
+        "x": 383,
+        "y": 26
+      },
+      "lowerRight": {
+        "x": 1217,
+        "y": 467
+      },
+      "upperRight": {
+        "x": 1237,
+        "y": 20
+      }
+    },
+    "translateResolution": {
+      "x": 900,
+      "y": 500
+    },
+    "doTranslation": false
+  }
+}
