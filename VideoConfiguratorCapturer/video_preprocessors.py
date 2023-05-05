@@ -7,17 +7,27 @@ import numpy as np
 import camera_config_pb2 as camera_config
 
 
-class PreprocessingPipeline:
+class CapturePreprocessingPipeline:
+    """A class that does initial preprocessing of a video, captured from a camera.
+    
+    It is tread-safe. Preprocessing can be done in one thread, which captures
+    video from the camera. And another thread can safely get the processed frames,
+    and update the config on-the-fly. 
+    """
+
     def __init__(self, video_capturer, preprocess_config):
         self.config = preprocess_config
         self.video_capturer = video_capturer
-        
+    
+        # Buffers for storing raw camera frame and a pre-processed frame.    
         self.camera_frame = None
         self.processed_frame = None
         
+        # Mutexes for accessing frame and configuration respectively.
         self.frame_mutex = threading.Lock()
         self.config_mutex = threading.Lock()
         
+        # Contains processing time statistics.
         self.processing_time = 0    
 
     def isTranslationMatrixDefined(self):
@@ -27,6 +37,12 @@ class PreprocessingPipeline:
         return True
 
     def doProjectiveTransform(self, input_frame):
+        """Applies the projective transformation on the frame from a camera.
+        
+           Effectively, "cuts" out a position specified by a source_region, 
+           specified by the self.config.source_region, and transforms it into
+           a destination region, which has resolution self.config.translate_resolution.
+        """
         current_frame = None
         if self.config.do_translation and self.isTranslationMatrixDefined():
             input_pts = np.float32([
@@ -53,11 +69,18 @@ class PreprocessingPipeline:
         return current_frame
 
     def UpdateConfig(self, new_preprocess_config):
+        """Updates the preprocessor config in this class."""
         with self.config_mutex:
             self.config = camera_config.PreprocessConfig() 
             self.config.CopyFrom(new_preprocess_config)
 
     def Process(self):
+        """Performs preprocessing of a single frame captured from a camera.
+        
+        Copies raw frame into self.camera_frame, and preprocessed frame into
+        self.processed_frame. In this way this can safely run in multithreaded
+        environment.
+        """
         frame = self.video_capturer.GetFrame()
         processing_start = time.time()
         local_processed_frame = None

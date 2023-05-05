@@ -42,8 +42,17 @@ message CameraConfig {
 	optional Resolution original_resolution = 3;
 	// The FPS to set at camera. If setting FPS is unsuccessful, the pipeline would fail.
 	optional int32 fps = 4;
+	
 	// Exposure to set with the camera.
 	optional float exposure = 5;
+	optional float gain = 6;
+	optional float brightness = 7;
+	optional float contrast = 8;
+	optional float gamma = 9;
+	optional float hue = 10;
+	optional float saturation = 11;
+	optional float sharpness = 12;
+	optional float white_balance = 13;
 }
 
 message PreprocessConfig {

@@ -7,46 +7,65 @@ import traceback
 import camera_config_pb2
 
 class VideoCapture:
+    """ A base class for capturing videos from various devices. """
+
     def __init__(self, camera_config):
+        """Initialize the capturer from the CameraConfig proto."""
         self.width = camera_config.original_resolution.x
         self.height = camera_config.original_resolution.y
         self.fps = camera_config.fps
         self.exposure = camera_config.exposure
 
     def GetFrame(self):
+        """Read the next frame from the device. """
         pass
     
-    def GetWidth(self):
-        return self.width
-
-    def GetHeight(self):
-        return self.height
-
-    def GetFPS(self):
-        return self.fps
-
-    def GetExposure(self):
-        return self.exposure
+    # def GetWidth(self):
+    #     return self.width
+    #
+    # def GetHeight(self):
+    #     return self.height
+    #
+    # def GetFPS(self):
+    #     return self.fps
 
 
 class VideoCaptureRealSense(VideoCapture):
+    """A class that captures videos from Intel RealSense device. """
+
     def __init__(self, camera_config):
         super().__init__(camera_config)
         
         self.pipeline = rs.pipeline()
         config = rs.config()
-
-        # self.width = 960
-        # self.height = 540
-        # self.fps = 60
         
         pipeline_wrapper = rs.pipeline_wrapper(self.pipeline)
         pipeline_profile = config.resolve(pipeline_wrapper)
         device = pipeline_profile.get_device()
         device_product_line = str(device.get_info(rs.camera_info.product_line))
-        print(device_product_line)
-        config.enable_stream(rs.stream.color, self.width, self.height, rs.format.bgr8, self.fps)
+        print("Detected RealSense device: %s. Enabling color stream at (%d x %d), %d FPS." %
+              (device_product_line, self.width, self.height, self.fps))
+        config.enable_stream(rs.stream.color,
+                             self.width, self.height, rs.format.rgb8, self.fps)
+        
+        print("Starting the camera pipeline and waiting for the frames...")
         self.pipeline.start(config)
+        self.pipeline.wait_for_frames(5000)
+
+        # Get a video sensor
+        sensor = self.pipeline.get_active_profile().get_device().query_sensors()[1]
+        print("Setting camera parameters.")
+        sensor.set_option(rs.option.enable_auto_exposure, 0)
+        sensor.set_option(rs.option.exposure, camera_config.exposure)
+        sensor.set_option(rs.option.gain, camera_config.gain)
+
+        sensor.set_option(rs.option.brightness, camera_config.brightness)
+        sensor.set_option(rs.option.contrast, camera_config.contrast)
+        sensor.set_option(rs.option.gamma, camera_config.gamma)
+        sensor.set_option(rs.option.hue, camera_config.hue)
+        sensor.set_option(rs.option.saturation, camera_config.saturation)
+        sensor.set_option(rs.option.sharpness, camera_config.sharpness)
+        sensor.set_option(rs.option.white_balance, camera_config.white_balance)
 
     def __del__(self):
         print("Closing RealSense camera")
@@ -71,12 +90,8 @@ class VideoCaptureUSB(VideoCapture):
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
         self.cap.set(cv2.CAP_PROP_FPS, self.fps)
-        # self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        # self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        # self.fps = int(self.cap.get(cv2.CAP_PROP_FPS)) 
     
         print("Camera parameters: width=%d, height=%d, FPS=%d" % (self.width, self.height, self.fps))
-        # print("Camera parameters: width=%d, height=%d" % (self.width, self.height))
 
     def __del__(self):
         print("Closing camera")

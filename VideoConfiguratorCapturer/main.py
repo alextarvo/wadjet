@@ -6,7 +6,6 @@ import tkinter as tk
 import cv2
 from PIL import Image, ImageTk
 from enum import Enum
-import numpy as np
 
 import video_capturers
 import video_preprocessors
@@ -25,6 +24,8 @@ import camera_config_pb2 as camera_config
 # pip install pyrealsense2
 # pip install protobuf
 
+# Run the program:
+# python3 ./main.py --config_path=./camera_config.realsense.pbtxt --video_output_path=./out.mp4
 
 config = camera_config.CameraConfig
 config_mutex = threading.Lock()    
@@ -79,26 +80,26 @@ class VideoConfiguratorCapturerApp:
 
         self.btn_clear_boundaries = tk.Button(
             self.controls_frame, text="Clear transform boundaries", command=self.clear_boundaries)
-        self.btn_clear_boundaries.grid(row=0, column=1, pady=10)
+        self.btn_clear_boundaries.grid(row=1, column=0, pady=10)
         self.btn_clear_boundaries.config(width=20)
 
         self.enable_transform_checkbox = tk.BooleanVar(value=config.preprocess_config.do_translation)
         self.enable_transform_widget = tk.Checkbutton(
             self.controls_frame, text="Enable transform",
             variable=self.enable_transform_checkbox, command=self.onEnableTranslation)
-        self.enable_transform_widget.grid(row=1, column=0, pady=10)
+        self.enable_transform_widget.grid(row=2, column=0, pady=10)
         self.enable_transform_widget.config(width=20)
 
         self.btn_start_capture = tk.Button(
             self.controls_frame, text="Start video capture", command=self.start_capture)
-        self.btn_start_capture.grid(row=2, column=0, pady=10)
+        self.btn_start_capture.grid(row=3, column=0, pady=10)
         self.btn_start_capture.config(width=20)
         if video_output_path is None or not config.preprocess_config.do_translation:
             self.btn_start_capture.config(state="disabled")
 
         self.btn_stop_capture = tk.Button(
             self.controls_frame, text="Stop video capture", command=self.stop_capture)
-        self.btn_stop_capture.grid(row=2, column=1, pady=10)
+        self.btn_stop_capture.grid(row=4, column=0, pady=10)
         self.btn_stop_capture.config(width=20)
         self.btn_stop_capture.config(state="disabled")
 
@@ -313,7 +314,7 @@ class VideoConfiguratorCapturerApp:
             processing_per_second =  1 / dt_previous
         self.previous_processing_end = self.current_processing_end
             
-        print("Processing time, s: %f, processing FPS: %f" % (self.video_preprocessor.GetProcessingTime(), processing_per_second))
+        # print("Processing time, s: %f, processing FPS: %f" % (self.video_preprocessor.GetProcessingTime(), processing_per_second))
         
         self.window.after(self.delay, self.update)
 

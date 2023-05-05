@@ -1,0 +1,44 @@
+{
+  "cameraConfig": {
+    "cameraType": "INTEL_REALSENSE",
+    "originalResolution": {
+      "x": 960,
+      "y": 540
+    },
+    "fps": 60,
+    "exposure": 1000.0
+    "gain": 30
+    "brightness": 0
+    "contrast": 50
+    "gamma": 300
+    "hue": 0
+    "saturation": 50
+    "sharpness": 0
+    "white_balance": 4000
+  },
+  "preprocessConfig": {
+    "sourceRegion": {
+      "lowerLeft": {
+        "x": 86,
+        "y": 467
+      },
+      "upperLeft": {
+        "x": 66,
+        "y": 65
+      },
+      "lowerRight": {
+        "x": 845,
+        "y": 440
+      },
+      "upperRight": {
+        "x": 852,
+        "y": 61
+      }
+    },
+    "translateResolution": {
+      "x": 800,
+      "y": 400
+    },
+    "doTranslation": true
+  }
+}
