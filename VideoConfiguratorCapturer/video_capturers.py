@@ -17,7 +17,7 @@ class VideoCapture:
         self.exposure = camera_config.exposure
 
     def GetFrame(self):
-        """Read the next frame from the device. """
+        """Read the next frame from the device in the BGR format (aka OpenCV standard). """
         pass
     
     # def GetWidth(self):
@@ -45,27 +45,30 @@ class VideoCaptureRealSense(VideoCapture):
         device_product_line = str(device.get_info(rs.camera_info.product_line))
         print("Detected RealSense device: %s. Enabling color stream at (%d x %d), %d FPS." %
               (device_product_line, self.width, self.height, self.fps))
+
+        for sensor in device.sensors:
+            if sensor.get_info(rs.camera_info.name) == 'RGB Camera':
+                print("Setting camera parameters. Exposure: %f" % camera_config.exposure)
+                sensor.set_option(rs.option.enable_auto_exposure, 0)
+                sensor.set_option(rs.option.exposure, camera_config.exposure)
+                sensor.set_option(rs.option.gain, camera_config.gain)
+
+                sensor.set_option(rs.option.brightness, camera_config.brightness)
+                sensor.set_option(rs.option.contrast, camera_config.contrast)
+                sensor.set_option(rs.option.gamma, camera_config.gamma)
+                sensor.set_option(rs.option.hue, camera_config.hue)
+                sensor.set_option(rs.option.saturation, camera_config.saturation)
+                sensor.set_option(rs.option.sharpness, camera_config.sharpness)
+                sensor.set_option(rs.option.white_balance, camera_config.white_balance)
         config.enable_stream(rs.stream.color,
-                             self.width, self.height, rs.format.rgb8, self.fps)
+                             self.width, self.height, rs.format.bgr8, self.fps)
         
         print("Starting the camera pipeline and waiting for the frames...")
         self.pipeline.start(config)
         self.pipeline.wait_for_frames(5000)
 
         # Get a video sensor
-        sensor = self.pipeline.get_active_profile().get_device().query_sensors()[1]
-        print("Setting camera parameters.")
-        sensor.set_option(rs.option.enable_auto_exposure, 0)
-        sensor.set_option(rs.option.exposure, camera_config.exposure)
-        sensor.set_option(rs.option.gain, camera_config.gain)
-
-        sensor.set_option(rs.option.brightness, camera_config.brightness)
-        sensor.set_option(rs.option.contrast, camera_config.contrast)
-        sensor.set_option(rs.option.gamma, camera_config.gamma)
-        sensor.set_option(rs.option.hue, camera_config.hue)
-        sensor.set_option(rs.option.saturation, camera_config.saturation)
-        sensor.set_option(rs.option.sharpness, camera_config.sharpness)
-        sensor.set_option(rs.option.white_balance, camera_config.white_balance)
+        # sensor = self.pipeline.get_active_profile().get_device().query_sensors()[1]
 
     def __del__(self):
         print("Closing RealSense camera")
@@ -97,12 +100,12 @@ class VideoCaptureUSB(VideoCapture):
         print("Closing camera")
         if self.cap.isOpened():
             self.cap.release()
-    
+
     def GetFrame(self):
         if self.cap.isOpened():
             ret, frame = self.cap.read()
             if ret:
-                return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                return ret
     
         print("Can't capture frame!")
         return None    

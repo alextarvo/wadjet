@@ -59,7 +59,7 @@ class VideoConfiguratorCapturerApp:
             sys.exit(1)
 
         # Set up a video preprocessor
-        self.video_preprocessor = video_preprocessors.PreprocessingPipeline(
+        self.video_preprocessor = video_preprocessors.CapturePreprocessingPipeline(
             self.capturer, config.preprocess_config)
 
         # Create a canvas where the video will be displayed
@@ -141,7 +141,8 @@ class VideoConfiguratorCapturerApp:
         )
         video_out = None
         if self.video_output_path is not None:
-            fourcc = cv2.VideoWriter_fourcc(*'avc1')
+            # fourcc = cv2.VideoWriter_fourcc(*'avc1')
+            fourcc = cv2.VideoWriter_fourcc('H','F','Y','U')
             video_out = cv2.VideoWriter(
                 self.video_output_path,
                 fourcc, config.camera_config.fps,
@@ -265,9 +266,10 @@ class VideoConfiguratorCapturerApp:
         #     current_frame = self.video_preprocessor.GetProcessedFrame()
         # else:
         #     current_frame = self.video_preprocessor.GetCameraFrame()
-        current_frame = self.video_preprocessor.GetProcessedFrame()
+        current_bgr_frame = self.video_preprocessor.GetProcessedFrame()
 
-        if current_frame is not None:
+        if current_bgr_frame is not None:
+            current_frame = cv2.cvtColor(current_bgr_frame, cv2.COLOR_BGR2RGB)
             self.frame = ImageTk.PhotoImage(image=Image.fromarray(current_frame))
             self.canvas.create_image(0, 0, image=self.frame, anchor=tk.NW)
 
@@ -341,3 +343,4 @@ if os.path.exists(args.config_path):
 # Now launch the UI application
 root = tk.Tk()
 VideoConfiguratorCapturerApp(root, args.config_path, args.video_output_path)
+
