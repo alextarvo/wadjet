@@ -130,7 +130,47 @@ class VideoConfiguratorCapturerApp:
         # An event used to enable / disable video recording
         self.recordEvent = threading.Event()
 
+        # Set up a background subtractor to detect motion.
+        self.background_subtractor = cv2.createBackgroundSubtractorMOG2(detectShadows=False)
+        self.background_subtractor.setShadowValue(0)
+
         self.window.mainloop()
+
+
+    def hasMotion(self, frame):
+        """Tries to detect motion in an input frame. 
+
+        Returns:
+          True, if there was noticeable motion in a frame.
+        """
+        if frame is None:
+            return False, None
+        # Don't add a gaussian blur here. It only increases false alarms due to 
+        # shadows
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        fgMask = self.background_subtractor.apply(gray)
+        
+        # Apply a threshold to the difference image
+        thresh = cv2.threshold(fgMask, 50, 255, cv2.THRESH_BINARY)[1]
+    
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+        thresh = cv2.erode(thresh, kernel, iterations=1)
+        # thresh = cv2.dilate(thresh, kernel, iterations=1)
+        
+        contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # mask_frame may contain a visualization of a motion detector.
+        # mask_frame = cv2.cvtColor(thresh, cv2.COLOR_GRAY2RGB)
+        motion_detected = False
+        for contour in contours:
+            if cv2.contourArea(contour) < 70:
+                continue
+            motion_detected = True
+            # Uncomment for visualization
+            # (x, y, w, h) = cv2.boundingRect(contour)
+            # cv2.rectangle(mask_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        return motion_detected
+
 
     def processingThreadFn(self):
         """This is a thread that reads frames from the camera and preprocess them.
@@ -142,7 +182,8 @@ class VideoConfiguratorCapturerApp:
         video_out = None
         if self.video_output_path is not None:
             # fourcc = cv2.VideoWriter_fourcc(*'avc1')
-            fourcc = cv2.VideoWriter_fourcc('H','F','Y','U')
+#             fourcc = cv2.VideoWriter_fourcc('H','F','Y','U')
+            fourcc = cv2.VideoWriter_fourcc(*'MJPG')
             video_out = cv2.VideoWriter(
                 self.video_output_path,
                 fourcc, config.camera_config.fps,
@@ -150,10 +191,16 @@ class VideoConfiguratorCapturerApp:
 
         while True:
             self.video_preprocessor.Process()
+            frame = self.video_preprocessor.GetProcessedFrame()
+
             if self.exitEvent.is_set():
                 break
             if self.recordEvent.is_set():
-                video_out.write(self.video_preprocessor.GetProcessedFrame())
+                if config.detect_motion:
+                    if self.hasMotion(frame):
+                        video_out.write(frame)
+                else:
+                    video_out.write(frame)
 
         if video_out is not None:
             print("Processing thread: closing video writer...")
@@ -337,7 +384,7 @@ if args.config_path is None:
 if os.path.exists(args.config_path):
     with open(args.config_path, "rt") as f:
         config_proto_text = f.read()
-    config = Parse(config_proto_text, camera_config.PipelineConfig())
+    config = Parse(config_proto_text, camera_config.CapturerConfig())
     print(config)
 
 # Now launch the UI application

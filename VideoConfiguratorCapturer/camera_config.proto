@@ -68,7 +68,12 @@ message PreprocessConfig {
 	optional bool do_translation = 12;
 }
 
-message PipelineConfig {
+message CapturerConfig {
 	optional CameraConfig camera_config = 1;
 	optional PreprocessConfig preprocess_config = 2;
+	
+	// True enables motion detection in the input video. A frame will be saved
+	// iff there is a motion in it. Used to keep the size of the training set down
+	// to a reasonable value.
+	optional bool detect_motion = 3;
 }

@@ -29,7 +29,7 @@ class CapturePreprocessingPipeline:
         
         # Contains processing time statistics.
         self.processing_time = 0    
-
+        
     def isTranslationMatrixDefined(self):
         if (self.config.source_region.lower_left.x == 0 and
             self.config.source_region.lower_left.y == 0):
@@ -67,6 +67,7 @@ class CapturePreprocessingPipeline:
         else:
             current_frame = input_frame
         return current_frame
+        
 
     def UpdateConfig(self, new_preprocess_config):
         """Updates the preprocessor config in this class."""
@@ -85,11 +86,10 @@ class CapturePreprocessingPipeline:
         processing_start = time.time()
         local_processed_frame = None
         if frame is not None:
-            local_processed_frame= self.doProjectiveTransform(frame)
-
-        with self.frame_mutex:
-            self.camera_frame = frame.copy()
-            self.processed_frame = local_processed_frame.copy()
+            local_processed_frame = self.doProjectiveTransform(frame)
+            with self.frame_mutex:
+                self.camera_frame = frame.copy()
+                self.processed_frame = local_processed_frame.copy()
         processing_end = time.time()
         self.processing_time = (processing_end - processing_start)
     

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13\x63\x61mera_config.proto\x12\x06wadjet\"\"\n\nResolution\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"\x97\x01\n\x07Region4\x12!\n\nlower_left\x18\x01 \x01(\x0b\x32\r.wadjet.Point\x12!\n\nupper_left\x18\x02 \x01(\x0b\x32\r.wadjet.Point\x12\"\n\x0blower_right\x18\x03 \x01(\x0b\x32\r.wadjet.Point\x12\"\n\x0bupper_right\x18\x04 \x01(\x0b\x32\r.wadjet.Point\"\xe5\x02\n\x0c\x43\x61meraConfig\x12\x34\n\x0b\x63\x61mera_type\x18\x01 \x01(\x0e\x32\x1f.wadjet.CameraConfig.CameraType\x12\x15\n\rcamera_source\x18\x02 \x01(\x05\x12/\n\x13original_resolution\x18\x03 \x01(\x0b\x32\x12.wadjet.Resolution\x12\x0b\n\x03\x66ps\x18\x04 \x01(\x05\x12\x10\n\x08\x65xposure\x18\x05 \x01(\x02\x12\x0c\n\x04gain\x18\x06 \x01(\x02\x12\x12\n\nbrightness\x18\x07 \x01(\x02\x12\x10\n\x08\x63ontrast\x18\x08 \x01(\x02\x12\r\n\x05gamma\x18\t \x01(\x02\x12\x0b\n\x03hue\x18\n \x01(\x02\x12\x12\n\nsaturation\x18\x0b \x01(\x02\x12\x11\n\tsharpness\x18\x0c \x01(\x02\x12\x15\n\rwhite_balance\x18\r \x01(\x02\"*\n\nCameraType\x12\x07\n\x03USB\x10\x00\x12\x13\n\x0fINTEL_REALSENSE\x10\x01\"\x84\x01\n\x10PreprocessConfig\x12&\n\rsource_region\x18\n \x01(\x0b\x32\x0f.wadjet.Region4\x12\x30\n\x14translate_resolution\x18\x0b \x01(\x0b\x32\x12.wadjet.Resolution\x12\x16\n\x0e\x64o_translation\x18\x0c \x01(\x08\"r\n\x0ePipelineConfig\x12+\n\rcamera_config\x18\x01 \x01(\x0b\x32\x14.wadjet.CameraConfig\x12\x33\n\x11preprocess_config\x18\x02 \x01(\x0b\x32\x18.wadjet.PreprocessConfig'
+  serialized_pb=b'\n\x13\x63\x61mera_config.proto\x12\x06wadjet\"\"\n\nResolution\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"\x97\x01\n\x07Region4\x12!\n\nlower_left\x18\x01 \x01(\x0b\x32\r.wadjet.Point\x12!\n\nupper_left\x18\x02 \x01(\x0b\x32\r.wadjet.Point\x12\"\n\x0blower_right\x18\x03 \x01(\x0b\x32\r.wadjet.Point\x12\"\n\x0bupper_right\x18\x04 \x01(\x0b\x32\r.wadjet.Point\"\xe5\x02\n\x0c\x43\x61meraConfig\x12\x34\n\x0b\x63\x61mera_type\x18\x01 \x01(\x0e\x32\x1f.wadjet.CameraConfig.CameraType\x12\x15\n\rcamera_source\x18\x02 \x01(\x05\x12/\n\x13original_resolution\x18\x03 \x01(\x0b\x32\x12.wadjet.Resolution\x12\x0b\n\x03\x66ps\x18\x04 \x01(\x05\x12\x10\n\x08\x65xposure\x18\x05 \x01(\x02\x12\x0c\n\x04gain\x18\x06 \x01(\x02\x12\x12\n\nbrightness\x18\x07 \x01(\x02\x12\x10\n\x08\x63ontrast\x18\x08 \x01(\x02\x12\r\n\x05gamma\x18\t \x01(\x02\x12\x0b\n\x03hue\x18\n \x01(\x02\x12\x12\n\nsaturation\x18\x0b \x01(\x02\x12\x11\n\tsharpness\x18\x0c \x01(\x02\x12\x15\n\rwhite_balance\x18\r \x01(\x02\"*\n\nCameraType\x12\x07\n\x03USB\x10\x00\x12\x13\n\x0fINTEL_REALSENSE\x10\x01\"\x84\x01\n\x10PreprocessConfig\x12&\n\rsource_region\x18\n \x01(\x0b\x32\x0f.wadjet.Region4\x12\x30\n\x14translate_resolution\x18\x0b \x01(\x0b\x32\x12.wadjet.Resolution\x12\x16\n\x0e\x64o_translation\x18\x0c \x01(\x08\"\x89\x01\n\x0e\x43\x61pturerConfig\x12+\n\rcamera_config\x18\x01 \x01(\x0b\x32\x14.wadjet.CameraConfig\x12\x33\n\x11preprocess_config\x18\x02 \x01(\x0b\x32\x18.wadjet.PreprocessConfig\x12\x15\n\rdetect_motion\x18\x03 \x01(\x08'
 )
 
 
@@ -344,25 +344,32 @@ _PREPROCESSCONFIG = _descriptor.Descriptor(
 )
 
 
-_PIPELINECONFIG = _descriptor.Descriptor(
-  name='PipelineConfig',
-  full_name='wadjet.PipelineConfig',
+_CAPTURERCONFIG = _descriptor.Descriptor(
+  name='CapturerConfig',
+  full_name='wadjet.CapturerConfig',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='camera_config', full_name='wadjet.PipelineConfig.camera_config', index=0,
+      name='camera_config', full_name='wadjet.CapturerConfig.camera_config', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='preprocess_config', full_name='wadjet.PipelineConfig.preprocess_config', index=1,
+      name='preprocess_config', full_name='wadjet.CapturerConfig.preprocess_config', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='detect_motion', full_name='wadjet.CapturerConfig.detect_motion', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -378,8 +385,8 @@ _PIPELINECONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=747,
-  serialized_end=861,
+  serialized_start=748,
+  serialized_end=885,
 )
 
 _REGION4.fields_by_name['lower_left'].message_type = _POINT
@@ -391,14 +398,14 @@ _CAMERACONFIG.fields_by_name['original_resolution'].message_type = _RESOLUTION
 _CAMERACONFIG_CAMERATYPE.containing_type = _CAMERACONFIG
 _PREPROCESSCONFIG.fields_by_name['source_region'].message_type = _REGION4
 _PREPROCESSCONFIG.fields_by_name['translate_resolution'].message_type = _RESOLUTION
-_PIPELINECONFIG.fields_by_name['camera_config'].message_type = _CAMERACONFIG
-_PIPELINECONFIG.fields_by_name['preprocess_config'].message_type = _PREPROCESSCONFIG
+_CAPTURERCONFIG.fields_by_name['camera_config'].message_type = _CAMERACONFIG
+_CAPTURERCONFIG.fields_by_name['preprocess_config'].message_type = _PREPROCESSCONFIG
 DESCRIPTOR.message_types_by_name['Resolution'] = _RESOLUTION
 DESCRIPTOR.message_types_by_name['Point'] = _POINT
 DESCRIPTOR.message_types_by_name['Region4'] = _REGION4
 DESCRIPTOR.message_types_by_name['CameraConfig'] = _CAMERACONFIG
 DESCRIPTOR.message_types_by_name['PreprocessConfig'] = _PREPROCESSCONFIG
-DESCRIPTOR.message_types_by_name['PipelineConfig'] = _PIPELINECONFIG
+DESCRIPTOR.message_types_by_name['CapturerConfig'] = _CAPTURERCONFIG
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Resolution = _reflection.GeneratedProtocolMessageType('Resolution', (_message.Message,), {
@@ -436,12 +443,12 @@ PreprocessConfig = _reflection.GeneratedProtocolMessageType('PreprocessConfig', 
   })
 _sym_db.RegisterMessage(PreprocessConfig)
 
-PipelineConfig = _reflection.GeneratedProtocolMessageType('PipelineConfig', (_message.Message,), {
-  'DESCRIPTOR' : _PIPELINECONFIG,
+CapturerConfig = _reflection.GeneratedProtocolMessageType('CapturerConfig', (_message.Message,), {
+  'DESCRIPTOR' : _CAPTURERCONFIG,
   '__module__' : 'camera_config_pb2'
-  # @@protoc_insertion_point(class_scope:wadjet.PipelineConfig)
+  # @@protoc_insertion_point(class_scope:wadjet.CapturerConfig)
   })
-_sym_db.RegisterMessage(PipelineConfig)
+_sym_db.RegisterMessage(CapturerConfig)
 
 
 # @@protoc_insertion_point(module_scope)

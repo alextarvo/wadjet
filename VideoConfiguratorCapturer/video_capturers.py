@@ -105,7 +105,7 @@ class VideoCaptureUSB(VideoCapture):
         if self.cap.isOpened():
             ret, frame = self.cap.read()
             if ret:
-                return ret
+                return frame
     
         print("Can't capture frame!")
         return None    
