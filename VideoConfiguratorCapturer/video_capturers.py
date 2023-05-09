@@ -19,22 +19,14 @@ class VideoCapture:
     def GetFrame(self):
         """Read the next frame from the device in the BGR format (aka OpenCV standard). """
         pass
-    
-    # def GetWidth(self):
-    #     return self.width
-    #
-    # def GetHeight(self):
-    #     return self.height
-    #
-    # def GetFPS(self):
-    #     return self.fps
-
 
 class VideoCaptureRealSense(VideoCapture):
     """A class that captures videos from Intel RealSense device. """
 
     def __init__(self, camera_config):
         super().__init__(camera_config)
+        
+        self.camera_config = camera_config
         
         self.pipeline = rs.pipeline()
         config = rs.config()
@@ -46,29 +38,49 @@ class VideoCaptureRealSense(VideoCapture):
         print("Detected RealSense device: %s. Enabling color stream at (%d x %d), %d FPS." %
               (device_product_line, self.width, self.height, self.fps))
 
+        print("Sensors found:")
         for sensor in device.sensors:
+            print(sensor.get_info(rs.camera_info.name))
             if sensor.get_info(rs.camera_info.name) == 'RGB Camera':
-                print("Setting camera parameters. Exposure: %f" % camera_config.exposure)
+                print("Setting camera parameters.")
                 sensor.set_option(rs.option.enable_auto_exposure, 0)
-                sensor.set_option(rs.option.exposure, camera_config.exposure)
-                sensor.set_option(rs.option.gain, camera_config.gain)
+                sensor.set_option(rs.option.exposure, self.camera_config.exposure)
+                sensor.set_option(rs.option.gain, self.camera_config.gain)
 
-                sensor.set_option(rs.option.brightness, camera_config.brightness)
-                sensor.set_option(rs.option.contrast, camera_config.contrast)
-                sensor.set_option(rs.option.gamma, camera_config.gamma)
-                sensor.set_option(rs.option.hue, camera_config.hue)
-                sensor.set_option(rs.option.saturation, camera_config.saturation)
-                sensor.set_option(rs.option.sharpness, camera_config.sharpness)
-                sensor.set_option(rs.option.white_balance, camera_config.white_balance)
+                sensor.set_option(rs.option.brightness, self.camera_config.brightness)
+                sensor.set_option(rs.option.contrast, self.camera_config.contrast)
+                sensor.set_option(rs.option.gamma, self.camera_config.gamma)
+                sensor.set_option(rs.option.hue, self.camera_config.hue)
+                sensor.set_option(rs.option.saturation, self.camera_config.saturation)
+                sensor.set_option(rs.option.sharpness, self.camera_config.sharpness)
+                sensor.set_option(rs.option.white_balance, self.camera_config.white_balance)
+            if sensor.get_info(rs.camera_info.name) == 'Stereo Module':
+                if self.camera_config.HasField("depth_config"):
+                    print("Setting depth module parameters.")
+                    if self.camera_config.HasField("depth_config"):
+                        if self.camera_config.depth_config.min_range > 0:
+                            sensor.set_option(rs.option.min_distance, self.camera_config.depth_config.min_range)  # 10 cm
+                        if self.camera_config.depth_config.max_range > 0:
+                            sensor.set_option(rs.option.min_distance, self.camera_config.depth_config.max_range)  # 10 cm
+
+        print("Enabling color stream.")
         config.enable_stream(rs.stream.color,
                              self.width, self.height, rs.format.bgr8, self.fps)
         
+        if self.camera_config.HasField("depth_config"):
+            print("Enabling depth stream.")
+            config.enable_stream(
+                rs.stream.depth,
+                self.camera_config.depth_config.original_resolution.x,
+                self.camera_config.depth_config.original_resolution.y,
+                rs.format.z16,
+                self.camera_config.depth_config.fps)
+
         print("Starting the camera pipeline and waiting for the frames...")
         self.pipeline.start(config)
+        if self.camera_config.HasField("depth_config"):
+            self.align = rs.align(rs.stream.color)
         self.pipeline.wait_for_frames(5000)
-
-        # Get a video sensor
-        # sensor = self.pipeline.get_active_profile().get_device().query_sensors()[1]
 
     def __del__(self):
         print("Closing RealSense camera")
@@ -76,12 +88,23 @@ class VideoCaptureRealSense(VideoCapture):
 
     def GetFrame(self):
         frames = self.pipeline.wait_for_frames()
-        color_frame = frames.get_color_frame()
-        if color_frame:
-            color_image = np.asanyarray(color_frame.get_data())
-            return color_image
-        print("Can't capture frame!")
-        return None
+        if self.camera_config.HasField("depth_config"):
+            aligned_frames = self.align.process(frames)
+            color_frame = aligned_frames.get_color_frame()
+            depth_frame = aligned_frames.get_depth_frame()
+        else:
+            color_frame = frames.get_color_frame()
+            depth_frame = None
+        if color_frame is None:
+            print("Can't capture frame!")
+            return None, None
+        color_image = np.asanyarray(color_frame.get_data())
+        
+        if depth_frame is not None:
+            depth_image = np.asanyarray(depth_frame.get_data())
+        else:
+            depth_image = None
+        return color_image, depth_image
 
 
 class VideoCaptureUSB(VideoCapture):

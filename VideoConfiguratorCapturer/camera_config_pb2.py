@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13\x63\x61mera_config.proto\x12\x06wadjet\"\"\n\nResolution\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"\x97\x01\n\x07Region4\x12!\n\nlower_left\x18\x01 \x01(\x0b\x32\r.wadjet.Point\x12!\n\nupper_left\x18\x02 \x01(\x0b\x32\r.wadjet.Point\x12\"\n\x0blower_right\x18\x03 \x01(\x0b\x32\r.wadjet.Point\x12\"\n\x0bupper_right\x18\x04 \x01(\x0b\x32\r.wadjet.Point\"\xe5\x02\n\x0c\x43\x61meraConfig\x12\x34\n\x0b\x63\x61mera_type\x18\x01 \x01(\x0e\x32\x1f.wadjet.CameraConfig.CameraType\x12\x15\n\rcamera_source\x18\x02 \x01(\x05\x12/\n\x13original_resolution\x18\x03 \x01(\x0b\x32\x12.wadjet.Resolution\x12\x0b\n\x03\x66ps\x18\x04 \x01(\x05\x12\x10\n\x08\x65xposure\x18\x05 \x01(\x02\x12\x0c\n\x04gain\x18\x06 \x01(\x02\x12\x12\n\nbrightness\x18\x07 \x01(\x02\x12\x10\n\x08\x63ontrast\x18\x08 \x01(\x02\x12\r\n\x05gamma\x18\t \x01(\x02\x12\x0b\n\x03hue\x18\n \x01(\x02\x12\x12\n\nsaturation\x18\x0b \x01(\x02\x12\x11\n\tsharpness\x18\x0c \x01(\x02\x12\x15\n\rwhite_balance\x18\r \x01(\x02\"*\n\nCameraType\x12\x07\n\x03USB\x10\x00\x12\x13\n\x0fINTEL_REALSENSE\x10\x01\"\x84\x01\n\x10PreprocessConfig\x12&\n\rsource_region\x18\n \x01(\x0b\x32\x0f.wadjet.Region4\x12\x30\n\x14translate_resolution\x18\x0b \x01(\x0b\x32\x12.wadjet.Resolution\x12\x16\n\x0e\x64o_translation\x18\x0c \x01(\x08\"\x89\x01\n\x0e\x43\x61pturerConfig\x12+\n\rcamera_config\x18\x01 \x01(\x0b\x32\x14.wadjet.CameraConfig\x12\x33\n\x11preprocess_config\x18\x02 \x01(\x0b\x32\x18.wadjet.PreprocessConfig\x12\x15\n\rdetect_motion\x18\x03 \x01(\x08'
+  serialized_pb=b'\n\x13\x63\x61mera_config.proto\x12\x06wadjet\"\"\n\nResolution\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"\x1d\n\x05Point\x12\t\n\x01x\x18\x01 \x01(\x05\x12\t\n\x01y\x18\x02 \x01(\x05\"\x97\x01\n\x07Region4\x12!\n\nlower_left\x18\x01 \x01(\x0b\x32\r.wadjet.Point\x12!\n\nupper_left\x18\x02 \x01(\x0b\x32\r.wadjet.Point\x12\"\n\x0blower_right\x18\x03 \x01(\x0b\x32\r.wadjet.Point\x12\"\n\x0bupper_right\x18\x04 \x01(\x0b\x32\r.wadjet.Point\"w\n\x11\x44\x65pthSensorConfig\x12/\n\x13original_resolution\x18\x01 \x01(\x0b\x32\x12.wadjet.Resolution\x12\x0b\n\x03\x66ps\x18\x02 \x01(\x05\x12\x11\n\tmin_range\x18\x03 \x01(\x02\x12\x11\n\tmax_range\x18\x04 \x01(\x02\"\x96\x03\n\x0c\x43\x61meraConfig\x12\x34\n\x0b\x63\x61mera_type\x18\x01 \x01(\x0e\x32\x1f.wadjet.CameraConfig.CameraType\x12\x15\n\rcamera_source\x18\x02 \x01(\x05\x12/\n\x13original_resolution\x18\x03 \x01(\x0b\x32\x12.wadjet.Resolution\x12\x0b\n\x03\x66ps\x18\x04 \x01(\x05\x12\x10\n\x08\x65xposure\x18\x05 \x01(\x02\x12\x0c\n\x04gain\x18\x06 \x01(\x02\x12\x12\n\nbrightness\x18\x07 \x01(\x02\x12\x10\n\x08\x63ontrast\x18\x08 \x01(\x02\x12\r\n\x05gamma\x18\t \x01(\x02\x12\x0b\n\x03hue\x18\n \x01(\x02\x12\x12\n\nsaturation\x18\x0b \x01(\x02\x12\x11\n\tsharpness\x18\x0c \x01(\x02\x12\x15\n\rwhite_balance\x18\r \x01(\x02\x12/\n\x0c\x64\x65pth_config\x18\x1e \x01(\x0b\x32\x19.wadjet.DepthSensorConfig\"*\n\nCameraType\x12\x07\n\x03USB\x10\x00\x12\x13\n\x0fINTEL_REALSENSE\x10\x01\"\x84\x01\n\x10PreprocessConfig\x12&\n\rsource_region\x18\n \x01(\x0b\x32\x0f.wadjet.Region4\x12\x30\n\x14translate_resolution\x18\x0b \x01(\x0b\x32\x12.wadjet.Resolution\x12\x16\n\x0e\x64o_translation\x18\x0c \x01(\x08\"\x89\x01\n\x0e\x43\x61pturerConfig\x12+\n\rcamera_config\x18\x01 \x01(\x0b\x32\x14.wadjet.CameraConfig\x12\x33\n\x11preprocess_config\x18\x02 \x01(\x0b\x32\x18.wadjet.PreprocessConfig\x12\x15\n\rdetect_motion\x18\n \x01(\x08'
 )
 
 
@@ -44,8 +44,8 @@ _CAMERACONFIG_CAMERATYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=568,
-  serialized_end=610,
+  serialized_start=738,
+  serialized_end=780,
 )
 _sym_db.RegisterEnumDescriptor(_CAMERACONFIG_CAMERATYPE)
 
@@ -181,6 +181,59 @@ _REGION4 = _descriptor.Descriptor(
 )
 
 
+_DEPTHSENSORCONFIG = _descriptor.Descriptor(
+  name='DepthSensorConfig',
+  full_name='wadjet.DepthSensorConfig',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='original_resolution', full_name='wadjet.DepthSensorConfig.original_resolution', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='fps', full_name='wadjet.DepthSensorConfig.fps', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='min_range', full_name='wadjet.DepthSensorConfig.min_range', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='max_range', full_name='wadjet.DepthSensorConfig.max_range', index=3,
+      number=4, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=252,
+  serialized_end=371,
+)
+
+
 _CAMERACONFIG = _descriptor.Descriptor(
   name='CameraConfig',
   full_name='wadjet.CameraConfig',
@@ -280,6 +333,13 @@ _CAMERACONFIG = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='depth_config', full_name='wadjet.CameraConfig.depth_config', index=13,
+      number=30, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -293,8 +353,8 @@ _CAMERACONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=253,
-  serialized_end=610,
+  serialized_start=374,
+  serialized_end=780,
 )
 
 
@@ -339,8 +399,8 @@ _PREPROCESSCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=613,
-  serialized_end=745,
+  serialized_start=783,
+  serialized_end=915,
 )
 
 
@@ -368,7 +428,7 @@ _CAPTURERCONFIG = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='detect_motion', full_name='wadjet.CapturerConfig.detect_motion', index=2,
-      number=3, type=8, cpp_type=7, label=1,
+      number=10, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -385,16 +445,18 @@ _CAPTURERCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=748,
-  serialized_end=885,
+  serialized_start=918,
+  serialized_end=1055,
 )
 
 _REGION4.fields_by_name['lower_left'].message_type = _POINT
 _REGION4.fields_by_name['upper_left'].message_type = _POINT
 _REGION4.fields_by_name['lower_right'].message_type = _POINT
 _REGION4.fields_by_name['upper_right'].message_type = _POINT
+_DEPTHSENSORCONFIG.fields_by_name['original_resolution'].message_type = _RESOLUTION
 _CAMERACONFIG.fields_by_name['camera_type'].enum_type = _CAMERACONFIG_CAMERATYPE
 _CAMERACONFIG.fields_by_name['original_resolution'].message_type = _RESOLUTION
+_CAMERACONFIG.fields_by_name['depth_config'].message_type = _DEPTHSENSORCONFIG
 _CAMERACONFIG_CAMERATYPE.containing_type = _CAMERACONFIG
 _PREPROCESSCONFIG.fields_by_name['source_region'].message_type = _REGION4
 _PREPROCESSCONFIG.fields_by_name['translate_resolution'].message_type = _RESOLUTION
@@ -403,6 +465,7 @@ _CAPTURERCONFIG.fields_by_name['preprocess_config'].message_type = _PREPROCESSCO
 DESCRIPTOR.message_types_by_name['Resolution'] = _RESOLUTION
 DESCRIPTOR.message_types_by_name['Point'] = _POINT
 DESCRIPTOR.message_types_by_name['Region4'] = _REGION4
+DESCRIPTOR.message_types_by_name['DepthSensorConfig'] = _DEPTHSENSORCONFIG
 DESCRIPTOR.message_types_by_name['CameraConfig'] = _CAMERACONFIG
 DESCRIPTOR.message_types_by_name['PreprocessConfig'] = _PREPROCESSCONFIG
 DESCRIPTOR.message_types_by_name['CapturerConfig'] = _CAPTURERCONFIG
@@ -428,6 +491,13 @@ Region4 = _reflection.GeneratedProtocolMessageType('Region4', (_message.Message,
   # @@protoc_insertion_point(class_scope:wadjet.Region4)
   })
 _sym_db.RegisterMessage(Region4)
+
+DepthSensorConfig = _reflection.GeneratedProtocolMessageType('DepthSensorConfig', (_message.Message,), {
+  'DESCRIPTOR' : _DEPTHSENSORCONFIG,
+  '__module__' : 'camera_config_pb2'
+  # @@protoc_insertion_point(class_scope:wadjet.DepthSensorConfig)
+  })
+_sym_db.RegisterMessage(DepthSensorConfig)
 
 CameraConfig = _reflection.GeneratedProtocolMessageType('CameraConfig', (_message.Message,), {
   'DESCRIPTOR' : _CAMERACONFIG,

@@ -82,13 +82,13 @@ class CapturePreprocessingPipeline:
         self.processed_frame. In this way this can safely run in multithreaded
         environment.
         """
-        frame = self.video_capturer.GetFrame()
+        color_frame, depth_frame = self.video_capturer.GetFrame()
         processing_start = time.time()
         local_processed_frame = None
-        if frame is not None:
-            local_processed_frame = self.doProjectiveTransform(frame)
+        if color_frame is not None:
+            local_processed_frame = self.doProjectiveTransform(color_frame)
             with self.frame_mutex:
-                self.camera_frame = frame.copy()
+                self.camera_frame = color_frame.copy()
                 self.processed_frame = local_processed_frame.copy()
         processing_end = time.time()
         self.processing_time = (processing_end - processing_start)

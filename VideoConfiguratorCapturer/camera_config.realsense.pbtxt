@@ -14,7 +14,14 @@
     "hue": 0,
     "saturation": 70,
     "sharpness": 100,
-    "white_balance": 4000
+    "white_balance": 4000,
+    "depth_config": {
+      "originalResolution": {
+        "x": 1280,
+        "y": 720
+      },
+      "fps": 30
+    }
   },
   "preprocessConfig": {
     "sourceRegion": {
