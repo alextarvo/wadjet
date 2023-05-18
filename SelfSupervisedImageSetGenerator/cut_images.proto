@@ -1,21 +1,26 @@
 //
 // A set of ball images "cut out" from the frames. 
-// To compile: protoc ./camera_config.proto --python_out=.
+// To compile: protoc ./cut_images.proto --python_out=.
 //
 
 syntax = "proto2";
 
 package wadjet;
 
-// A single image of the ball, "cut out" from the original frame.
-message CutImage {
-	//Original coordinates of a ball, as detected by an object detector.
+message BallCoordinates {
 	optional int32 x = 1; 
 	optional int32 y = 2;
 	optional int32 r = 3;
+}
 
+// A single image of the ball, "cut out" from the original frame.
+message CutImage {
+	//Original coordinates of a ball, as detected by an object detector.
+	optional BallCoordinates coordinates = 1;
+	
 	// "cut out" image of the ball, as a serialized Numpy array.
 	optional bytes image = 10;
+	
 	// Shape of the numpy array that contains the cut image.
 	optional int32 rows = 11;
 	optional int32 cols = 12;

@@ -16,7 +16,7 @@ message Point {
 	optional int32 x = 1;
 	optional int32 y = 2;
 }
-	
+
 message Region4 {
 	optional Point lower_left = 1;
 	optional Point upper_left = 2;

@@ -33,6 +33,7 @@ config_mutex = threading.Lock()
 
 Action = Enum('Action', ['set_bottom_right', 'set_bottom_left', 'set_top_right', 'set_top_left', 'none'])
 
+ENABLE_MOTION_DETECT_AFTER = 120
 
 class VideoConfiguratorCapturerApp:
     def __init__(self, window, config_path, video_output_path):
@@ -189,18 +190,23 @@ class VideoConfiguratorCapturerApp:
                 fourcc, config.camera_config.fps,
                 desired_size, True)
 
+        input_frames = 0
+        written_frames = 0
         while True:
             self.video_preprocessor.Process()
             frame = self.video_preprocessor.GetProcessedFrame()
+            input_frames += 1
 
             if self.exitEvent.is_set():
                 break
             if self.recordEvent.is_set():
-                if config.detect_motion:
+                if written_frames > ENABLE_MOTION_DETECT_AFTER and config.detect_motion:
                     if self.hasMotion(frame):
                         video_out.write(frame)
+                        written_frames += 1
                 else:
                     video_out.write(frame)
+                    written_frames += 1
 
         if video_out is not None:
             print("Processing thread: closing video writer...")

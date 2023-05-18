@@ -7,6 +7,9 @@ import cv2
 import numpy as np
 
 import cut_images_pb2
+# import camera_config_pb2 as camera_config
+#
+# from google.protobuf.json_format import Parse
 
 # The tool to "cut out" the images of a ball from the input pictures, and
 # to save them into a seaprate .proto file.
@@ -144,8 +147,33 @@ def displaySingleImage(frame, fps, window_name):
         cv2.waitKey(-1) # wait until any key is pressed to continue
     return True
 
+#
+# def doTestDetector():
+#     if args.config_path is None:
+#         print("Config file name should be passed to an application")
+#         sys.exit(1)
+#
+#     if os.path.exists(args.config_path):
+#         with open(args.config_path, "rt") as f:
+#             config_proto_text = f.read()
+#         config = Parse(config_proto_text, camera_config.CapturerConfig())
+#
+#         try:
+#             capturer= video_capturers.CreateVideoCapturer(config.camera_config)
+#         except Exception:
+#             sys.exit(1)
+#
+#         # Set up a video preprocessor
+#         self.video_preprocessor = video_preprocessors.CapturePreprocessingPipeline(
+#             self.capturer, config.preprocess_config)
+#
+#         while True:
+#             video_preprocessor.Process()
+#             frame = self.video_preprocessor.GetProcessedFrame()
+
 
 parser = argparse.ArgumentParser()
+
 parser.add_argument(
     '--input_video_path',
     type=str,
@@ -164,13 +192,13 @@ parser.add_argument(
 
 parser.add_argument(
     '--show_ui',
-    type=bool,
-    default=False,
     help='Display the original image, binary mask, and cut image to the user.')
 
-
-
 args = parser.parse_args()
+#
+# if args.test_detector:
+#     doTestDetector()
+#     exit()
 
 # Capture the first frame of the video stream
 cap = cv2.VideoCapture(args.input_video_path)
@@ -206,8 +234,8 @@ while True:
             print("More than 1 ball detected! Skipping frame %d." % frame_counter)
             break
 
-        cv2.circle(frame, (x, y), r, (0, 255, 0), 2)
-        cv2.circle(frame, (x, y), 2, (0, 0, 255), 3)
+        # cv2.circle(frame, (x, y), r, (0, 255, 0), 2)
+        # cv2.circle(frame, (x, y), 2, (0, 0, 255), 3)
 
         if r <= 0:
             print("Radius of the detected ball is negative. Frame %d, (x, y, r) = (%d, %d, %d)" % (frame_counter, x, y, r))
@@ -217,9 +245,9 @@ while True:
         
         #now, save the cut image in the proto where all the "cuts" will be saved into.
         cut_image = cut_images_set.cut_images.add()
-        cut_image.x = x
-        cut_image.y = y
-        cut_image.r = r
+        cut_image.coordinates.x = x
+        cut_image.coordinates.y = y
+        cut_image.coordinates.r = r
         (cut_image.rows, cut_image.cols, cut_image.channels) =  cut_img.shape
         cut_image.image = cut_img.tobytes()
 
@@ -240,6 +268,9 @@ print("Parse complete. Total %d frames were read. %d frames were written to the 
 if args.output_path is not None:
     print("Saving the cut imageset into a file %s" % args.output_path)
     binary_msg = cut_images_set.SerializeToString()
+    directory = os.path.dirname(args.output_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     with open(args.output_path, 'wb') as f:
         f.write(binary_msg)
     f.close()
