@@ -4,6 +4,7 @@ import math
 
 import argparse
 import logging
+import json
 
 import cv2
 import numpy as np
@@ -26,9 +27,18 @@ class DatasetWriter():
         self.frame_seq = self.frame_seq+1
         file_name = f"{self.output_folder_path}/{self.frame_seq}.png" 
         cv2.imwrite(file_name, frame)
+        file_name = f"{self.output_folder_path}/{self.frame_seq}.json"
+        dict_json_centers = {}
+        for ball_id, ball_coordinates in ball_centers.items():
+            dict_json_centers[ball_id] = {"x": ball_coordinates.x, "y": ball_coordinates.y, "r": ball_coordinates.r}
+        with open(file_name, 'w') as f:
+            json.dump(dict_json_centers, f)
 
 
 class CutImagesForBall:
+    
+    MIN_SET_SIZE = 100
+    
     def __init__(self, ball_no, file_name):
         self.ball_no = ball_no 
         self.cut_images_set = cut_images_pb2.CutImageSet()
@@ -39,10 +49,18 @@ class CutImagesForBall:
     @classmethod
     def Create(cls, ball_no, input_images_folder):
         file_name = f"{input_images_folder}/ball{ball_no}.pb"
+        image_set = None
         if Path(file_name).is_file():
-            return cls(ball_no, file_name)
+            image_set = cls(ball_no, file_name)
         else:
-            return None  
+            return None
+        num_images = len(image_set.cut_images_set.cut_images)
+        if num_images <  cls.MIN_SET_SIZE:
+            logging.warning(f"Cannot create image set for ball {ball_no}: loaded only {num_images}; minimum required is {cls.MIN_SET_SIZE}")
+            return None
+        else:
+            logging.info(f"Created image set for ball {ball_no}: loaded {num_images} images")
+        return image_set
 
     def Sample(self):
         idx = np.random.randint(len(self.cut_images_set.cut_images))
@@ -209,11 +227,13 @@ for ball_id in range(0, NUM_BALLS):
     else:
         generator.AddCutImages(ball_id, cutout_set)
 
+images_generated = 0
 dataset_writer = DatasetWriter(args.output_dataset_path) 
-for i in range(args.num_images_to_generate):
+while images_generated < args.num_images_to_generate:
     image, centers = generator.GenerateImage()
     if image is not None and centers is not None:
         dataset_writer.addFrame(image, centers)
+        images_generated += 1
         # For debug purposes
         # print(centers)
         #
