@@ -16,6 +16,20 @@ logging.basicConfig(level=logging.INFO)
 
 NUM_BALLS = 16
 
+class BallBox:
+    def __init__(self, center):
+        self.x1 = int(center.x-center.r)  
+        self.y1 = int(center.y-center.r)
+        self.x2 = int(center.x+center.r)  
+        self.y2 = int(center.y+center.r)
+        
+    def RecomputeRatio(self, ratio):
+        self.x1 = int(self.x1*ratio)
+        self.y1 = int(self.y1*ratio)
+        self.x2 = int(self.x2*ratio)
+        self.y2 = int(self.y2*ratio)
+    
+
 class DatasetWriter():
     def __init__(self, output_folder_path):
         self.output_folder_path = output_folder_path 
@@ -23,8 +37,19 @@ class DatasetWriter():
             os.makedirs(self.output_folder_path)
         self.frame_seq = 0
 
-    def addFrame(self, frame, ball_centers):
+    def incrementFrameCounter(self):
         self.frame_seq = self.frame_seq+1
+        
+    def AddFrame(self, frame, ball_centers):
+        self.incrementFrameCounter()
+
+
+class SimpleDatasetWriter(DatasetWriter):
+    def __init__(self, output_folder_path):
+        super().__init__(output_folder_path)
+
+    def AddFrame(self, frame, ball_centers):
+        super().AddFrame(frame, ball_centers)
         file_name = f"{self.output_folder_path}/{self.frame_seq}.png" 
         cv2.imwrite(file_name, frame)
         file_name = f"{self.output_folder_path}/{self.frame_seq}.json"
@@ -33,6 +58,64 @@ class DatasetWriter():
             dict_json_centers[ball_id] = {"x": ball_coordinates.x, "y": ball_coordinates.y, "r": ball_coordinates.r}
         with open(file_name, 'w') as f:
             json.dump(dict_json_centers, f)
+
+
+class CocoDatasetWriter(DatasetWriter):
+    def __init__(self, output_folder_path, dataset_type, width, height):
+        super().__init__(output_folder_path)
+        self.width = width
+        self.height = height
+        self.ratio = 1.0
+        self.images_subfolder = f"{self.output_folder_path}/images/{dataset_type}" 
+        if not os.path.exists(self.images_subfolder):
+            os.makedirs(self.images_subfolder)
+        self.labels_subfolder = f"{self.output_folder_path}/labels/{dataset_type}" 
+        if not os.path.exists(self.labels_subfolder):
+            os.makedirs(self.labels_subfolder)
+        self.show_ui = False
+        self.output_boxes = False
+
+    def SetRecomputeRatio(self, ratio):
+        self.ratio = ratio
+
+    def SetShowUI(self, show_ui):
+        self.show_ui = show_ui
+
+    def SetOutputBoxes(self, output_boxes):
+        self.output_boxes = output_boxes
+
+    def showFrame(self, frame):
+        cv2.namedWindow('Synthetic image', cv2.WINDOW_NORMAL)
+        cv2.imshow('Synthetic image', frame)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+    
+    def outputBox(self, frame, x, y, obj_width, obj_height):
+        x1 = int((x-obj_width/2)*self.width)
+        y1 = int((y-obj_height/2)*self.height)
+        x2 = int((x+obj_width/2)*self.width)
+        y2 = int((y+obj_height/2)*self.height)
+        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), thickness=1)
+        pass
+
+    def AddFrame(self, frame, ball_centers):
+        super().AddFrame(frame, ball_centers)
+        labels_file_name = f"{self.labels_subfolder}/{self.frame_seq}.txt"
+        with open(labels_file_name, 'w') as f:
+            for ball_id, ball_coordinates in ball_centers.items():
+                coco_x = float(ball_coordinates.x * self.ratio) / self.width
+                coco_y = float(ball_coordinates.y* self.ratio) / self.height
+                coco_width = float(ball_coordinates.r *2 * self.ratio) / self.width
+                coco_height = float(ball_coordinates.r *2 * self.ratio) / self.height
+                coco_entry = f"{ball_id} {coco_x} {coco_y} {coco_width} {coco_height}\n"
+                f.write(coco_entry)
+                if (self.output_boxes):
+                    self.outputBox(frame, coco_x, coco_y, coco_width, coco_height)
+
+        image_file_name = f"{self.images_subfolder}/{self.frame_seq}.png" 
+        cv2.imwrite(image_file_name, frame)
+        if self.show_ui:
+            self.showFrame(frame)
 
 
 class CutImagesForBall:
@@ -91,7 +174,7 @@ class ImageGenerator:
         ball_center.y = ball_image.coordinates.y
         
         if self.ballsMayOverlap(ball_center, ball_centers.values()):
-            logging.warning(f"Likely overlap for balls; skipping image")
+            logging.info(f"Likely overlap for balls; skipping image")
             return False
 
         # We found a good location.
@@ -104,7 +187,7 @@ class ImageGenerator:
             target_y < 0 or
             target_y + ball_image.rows > synth_image.shape[0] or
             target_x+ball_image.cols > synth_image.shape[1]):
-            logging.warning(f"A patch with ball centered at {ball_center.x}, {ball_center.y} is outside the synthethic image frame")
+            logging.info(f"A patch with ball centered at {ball_center.x}, {ball_center.y} is outside the synthethic image frame")
             return False
         
         synth_image[target_y:target_y+ball_image.rows, target_x:target_x+ball_image.cols] = ball_frame
@@ -135,7 +218,7 @@ class ImageGenerator:
                     target_y < 0 or
                     target_y + ball_image.rows > synth_image.shape[0] or
                     target_x+ball_image.cols > synth_image.shape[1]):
-                    logging.warning(f"A patch with ball centered at {ball_center.x}, {ball_center.y} is outside the synthethic image frame")
+                    logging.info(f"A patch with ball centered at {ball_center.x}, {ball_center.y} is outside the synthethic image frame")
                     return False
                 
                 synth_image[target_y:target_y+ball_image.rows, target_x:target_x+ball_image.cols] = ball_frame
@@ -172,7 +255,18 @@ class ImageGenerator:
 
         return synth_image, ball_centers
 
-
+def PadToSize(image, target_width, target_height):
+    # This is a temp code for the final project. Make the img squeeze into 640 pixels,
+    # and then pad it.
+    height, width = image.shape[:2]
+    ratio = target_width / float(width)
+    target_height_current = int(height*ratio)
+    image = cv2.resize(image, (target_width, target_height_current))
+    padding_color = [0,0,0]
+    padding_height = target_height - target_height_current
+    image = cv2.copyMakeBorder(image, 0, padding_height, 0, 0, cv2.BORDER_CONSTANT, value=padding_color)
+    # end of temp code
+    return image, ratio
 
 parser = argparse.ArgumentParser()
 
@@ -187,10 +281,28 @@ parser.add_argument(
     help='Path where to store the synthethic images.')
 
 parser.add_argument(
-    '--num_images_to_generate',
+    '--num_train_images',
     type=int,
-    help='The number of synthetic images to be generated.')
+    help='The number of synthetic training images to be generated.')
 
+parser.add_argument(
+    '--num_val_images',
+    type=int,
+    help='The number of synthetic validation images to be generated.')
+
+parser.add_argument(
+    '--num_test_images',
+    type=int,
+    help='The number of synthetic test images to be generated.')
+
+parser.add_argument(
+    '--show_boxes',
+    help='Show boxes around the balls on the resulting image (debug).')
+
+
+parser.add_argument(
+    '--show_ui',
+    help='Display the original image, binary mask, and cut image to the user.')
 
 args = parser.parse_args()
 
@@ -227,17 +339,51 @@ for ball_id in range(0, NUM_BALLS):
     else:
         generator.AddCutImages(ball_id, cutout_set)
 
+
+target_width = 640
+target_height = 640
+
 images_generated = 0
-dataset_writer = DatasetWriter(args.output_dataset_path) 
-while images_generated < args.num_images_to_generate:
+# dataset_writer = SimpleDatasetWriter(args.output_dataset_path) 
+dataset_writer = CocoDatasetWriter(args.output_dataset_path, "train", target_width, target_height)
+dataset_writer.SetOutputBoxes(args.show_boxes)
+dataset_writer.SetShowUI(args.show_ui)
+while images_generated < args.num_train_images:
     image, centers = generator.GenerateImage()
     if image is not None and centers is not None:
-        dataset_writer.addFrame(image, centers)
+        image, ratio = PadToSize(image, target_width, target_height)
+        dataset_writer.SetRecomputeRatio(ratio)
+        dataset_writer.AddFrame(image, centers)
         images_generated += 1
-        # For debug purposes
-        # print(centers)
-        #
-        # cv2.namedWindow('Synthetic image', cv2.WINDOW_NORMAL)
-        # cv2.imshow('Synthetic image', image)
-        # key = cv2.waitKey()
-        # cv2.destroyAllWindows()
+
+images_generated = 0
+dataset_writer = CocoDatasetWriter(args.output_dataset_path, "val", target_width, target_height)
+dataset_writer.SetOutputBoxes(args.show_boxes)
+dataset_writer.SetShowUI(args.show_ui)
+while images_generated < args.num_val_images:
+    image, centers = generator.GenerateImage()
+    if image is not None and centers is not None:
+        image, ratio = PadToSize(image, target_width, target_height)
+        dataset_writer.SetRecomputeRatio(ratio)
+        dataset_writer.AddFrame(image, centers)
+        images_generated += 1
+
+images_generated = 0
+dataset_writer = CocoDatasetWriter(args.output_dataset_path, "test", target_width, target_height)
+dataset_writer.SetOutputBoxes(args.show_boxes)
+dataset_writer.SetShowUI(args.show_ui)
+while images_generated < args.num_test_images:
+    image, centers = generator.GenerateImage()
+    if image is not None and centers is not None:
+        image, ratio = PadToSize(image, target_width, target_height)
+        dataset_writer.SetRecomputeRatio(ratio)
+        dataset_writer.AddFrame(image, centers)
+        images_generated += 1
+
+# This is a test code.
+# if args.show_boxes:
+#     for ball_center in centers.values():
+#         box = BallBox(ball_center)
+#         # temporary - to make sure it fits 640x640 input for the YOLOv5
+#         box.RecomputeRatio(ratio)
+#         cv2.rectangle(image, (box.x1, box.y1), (box.x2, box.y2), (0, 255, 0), thickness=1)

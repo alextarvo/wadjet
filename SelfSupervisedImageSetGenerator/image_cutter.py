@@ -40,8 +40,10 @@ class BallDetector():
         # How much the shape of the contour will be close to the circle.
         self.min_circularity = 0.52
         # Minimum and maximum areas of a candidate ball.
-        self.min_blob_area = 200
-        self.max_blob_area = 2000
+        # self.min_blob_area = 200
+        # self.max_blob_area = 2000
+        self.min_blob_area = 180
+        self.max_blob_area = 1800
 
 
     def detectBall(self, frame):
@@ -55,8 +57,14 @@ class BallDetector():
         else:
             diff = self.fgbg.apply(frame,  learningRate=0)
             return_frame = diff
+            # Remove small "white" noise in the image. I.e. 1-pixel false detections, likely caused
+            # by the camera noise. 
             return_frame = cv2.erode(return_frame, None, iterations=1)
+            # Now dilate the image. If there are any "gaps" within the image of the ball, they will
+            # be "filled in" by dilation.
             return_frame = cv2.dilate(return_frame, None, iterations=4)
+            # Now erode image back. So our ball blob will be of the same size as the initial one. 
+            return_frame = cv2.erode(return_frame, None, iterations=3)
 
             contours, _ = cv2.findContours(return_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             return_frame = cv2.cvtColor(return_frame, cv2.COLOR_GRAY2RGB)
