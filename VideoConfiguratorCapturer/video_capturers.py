@@ -1,3 +1,8 @@
+#
+# Set of classes that capture the video from a camera, and pass it to the rest of the program.
+# The video can be captured from the regular USB camera, or from RealSense camera. For RealSense, we also capture the depth stream.
+# It is expected these classes will be running in a separate thread, so we make them as threadsafe as we can.
+#
 import sys
 import cv2
 import pyrealsense2 as rs

@@ -7,12 +7,9 @@ import cv2
 import numpy as np
 
 import cut_images_pb2
-# import camera_config_pb2 as camera_config
-#
-# from google.protobuf.json_format import Parse
 
-# The tool to "cut out" the images of a ball from the input pictures, and
-# to save them into a seaprate .proto file.
+# The tool to "cut out" the images of a single ball from the input video, and
+# to save them into a seprate .proto file.
 # Later on, the "cut out" images will be pasted into random locations into the previously 
 # captured background. 
  
@@ -38,12 +35,13 @@ class BallDetector():
         
         # Parameters of the ball detector.
         # How much the shape of the contour will be close to the circle.
-        self.min_circularity = 0.52
+        # self.min_circularity = 0.52
+        self.min_circularity = 0.55
         # Minimum and maximum areas of a candidate ball.
         # self.min_blob_area = 200
         # self.max_blob_area = 2000
         self.min_blob_area = 180
-        self.max_blob_area = 1800
+        self.max_blob_area = 1600
 
 
     def detectBall(self, frame):
@@ -73,6 +71,8 @@ class BallDetector():
                 blobArea = cv2.contourArea(c)
                 # Get blob periemter
                 blobPerimeter = cv2.arcLength(c, True)
+                if blobPerimeter == 0:
+                    continue
                 # Compute circulariity of the blob.
                 blobCircularity = (4 * 3.1416 * blobArea)/(blobPerimeter**2)
 

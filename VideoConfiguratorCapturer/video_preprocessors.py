@@ -1,3 +1,14 @@
+#
+# A pipeline that pre-processes a video stream captured from a camera.
+# Most importantly, it applies a projective transform - given coordinates of a table corner,
+# "cuts out" that table from an input image and converts into a rectangular image with given
+# size.
+#
+# TODO(alexta, 07/11/23): this is just a single transform; it's not that correct to call it "pipeline".
+# Currently pieces of pipeline leak into many places (i.e. into capturer's main file itself). Need
+# to completely refactor these - put individual transforms into separate classes, and store them in a
+# folder.
+#
 import threading
 import time
 
